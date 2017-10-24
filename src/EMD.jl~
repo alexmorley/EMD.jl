@@ -1,9 +1,0 @@
-Module EMD
-
-# put code here
-println("EMD.jl has been initialized")
-
-
-
-
-end # module

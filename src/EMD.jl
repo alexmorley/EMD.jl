@@ -1,6 +1,6 @@
 module EMD
 
-include("EMDUtil.jl")
+include("util.jl")
 include("IMF.jl")
 #include("IF.jl)
 #using Splines
