@@ -3,7 +3,7 @@
 # y(i-1) < y(i) > y(i+1) for max and y(i-1)> y(i) <y(i+1) for min
 #
 
-function findExtrema(y::Vector{Float64}, t::Vector{Float64})
+function findExtrema(y::Vector{<:Real}, t::Vector{<:Real})
 
 	maxAr  = Float64[]	#array for storing local maxima
 	minAr  = Float64[]	#array for storing local minima
