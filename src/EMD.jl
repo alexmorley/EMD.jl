@@ -4,7 +4,7 @@ include("util.jl")
 include("IMF.jl")
 #include("IF.jl)
 #using Splines
-using Interpolations
+using Dierckx
 
 export findExtrema
 export IMF
