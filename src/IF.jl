@@ -1,8 +1,8 @@
 """
-    function IF(C, t, x=0, order=4, window=0)
+    function IF(C, t; x=0, order=4, window=0; fs=1)
 Calculate instantaneous frequencies
 """
-function IF(C, t, x=0, order=4, window=0)
+function IF(C, t, x=0, order=4, window=0; fs=1)
 
 	n,N = size(C)
 	n = length(t)
@@ -20,10 +20,12 @@ function IF(C, t, x=0, order=4, window=0)
 
 	for i =1:N
         H1 = Spline1D(t, C[:,i], k = order)
-        Phi[:,i] = abs(hilbert(H1[x]))
-        Phi[:,i] = Phi[:,i].*window
+        
+        Phi[1:end,i] = fs/π .* angle.(hilbert(H1[x]))
+        #abs(hilbert(H1[x]))
+        
+       Phi[:,i] = Phi[:,i].*window
     end
 
 	return Phi
-
 end
