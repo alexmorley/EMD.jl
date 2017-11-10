@@ -1,41 +1,46 @@
+abstract type TimeSeriesModel end
+
+mutable struct EMD <: TimeSeriesModel
+    k::Int
+    C::Array{Float64,2}
+    var::Array{Float64,1}
+    maxorder::Int
+    tols=Tuple{Float64,Float64}
+    function new(k, maxorder=4, tols=(0.01,0.01))
+        EMD(k, Array{Float64,2}(0,0), Array{Float64,1}(0), maxorder, tols)
+    end
+end
+
 #Function to calculate intrinsic mode functions
 #N is the maximum number of modes to find
-"""
-    IMF(y, t; toldev=0.01, tolzero = 0.01, order=4, N=5, window=0)
-Calculate the intrinsic mode functions of the sequence y along timespan t.
-"""
-function IMF(y, t; toldev=0.01, tolzero = 0.01, order=4, N=5, window=0)
-	if window==0
-		window = ones(length(t))
-	end
+#"""
+#    IMF(y, t; toldev=0.01, tolzero = 0.01, order=4, N=5, window=0)
+#Calculate the intrinsic mode functions of the sequence y along timespan t.
+#"""
 
+function fit!(model::EMD, y)
+    t = ####
+    model.C,model.var 
+end
+
+function IMF!(y, t; toldev=0.01, tolzero = 0.01, order=4, N=5, window=ones(length(t)))
 	n = length(y)
 	f = zeros(n,N)
 	tempy = copy(y)
 	eps = 0.00001
-
+    model
 	n_modes = 0;
+    var = zeros(N)
 
 	for i = 1:N
 		avg = zeros(n,1)+1
-		sd = 2*toldev
+        var[i] = 2*toldev
 
 		while(mean(abs.(avg))>tolzero && sd > toldev)
 
 			# Interpolate a spline through the maxima and minima
 			max_ar, min_ar, tmax, tmin = findExtrema(tempy, t)
 
-			# # Don't use too high an order to interpolate, restrict it if there are not many extrema
-			# p_max = min(order, length(max_ar)-2)
-			# p_min = min(order, length(min_ar)-2)
-
-			# # Make even order
-			# p_max = Int(2*floor(p_max/2))
-			# p_min = Int(2*floor(p_min/2))
-
-			# # At least linear
-			# p_max = max(p_max,2)
-			# p_min = max(p_min,2)
 			p_max = (length(max_ar) >= order) ? order : 4
 			p_min = (length(min_ar) >= order) ? order : 4
 
@@ -53,11 +58,9 @@ function IMF(y, t; toldev=0.01, tolzero = 0.01, order=4, N=5, window=0)
 
 			tempy = tempy-avg
 
-			sd = mean( (avg.^2)./((y-f[:,i]).^2 + eps) )
+            var[i] = sqrt(mean( (avg.^2)./((y-f[:,i]).^2 + eps) ))
 
 			f[:,i] = f[:,i] + avg
-
-			#println(sd)
 		end
 
 		tempy = copy(f[:,i])
@@ -76,6 +79,6 @@ function IMF(y, t; toldev=0.01, tolzero = 0.01, order=4, N=5, window=0)
 	for i = 2:n_modes
 		C[:,i] = f[:,i-1]-f[:,i]
 	end
-
-	return C
+    
+	return C,var
 end
